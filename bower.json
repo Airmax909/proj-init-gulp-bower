@@ -1,0 +1,23 @@
+{
+  "name": "proj-gulp-bower2",
+  "version": "1.0.0",
+  "authors": [
+    "Mickel Metekohy"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "foundation": "~5.5.3",
+    "font-awesome": "fontawesome#~4.4.0"
+  }
+}
