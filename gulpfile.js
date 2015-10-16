@@ -10,6 +10,7 @@ var gulp = require('gulp'),
   gulpAutoprefixer = require('gulp-autoprefixer'),
   gulpConcat = require('gulp-concat'),
   gulpUglify = require('gulp-uglify'),
+  gulpImageResize = require('gulp-image-resize'),
   browserSync = require('browser-sync');
 
 /**
@@ -33,19 +34,20 @@ var cssSources = ['build/css/**/*.css'],
   scssSources = ['build/scss/**/*.scss'],
   jsSources = ['build/js/**/*.js'],
   mediaSources = ['build/media/**/*.*'],
+  imagesSources = ['build/media/**/*.{png,Png,PNG,jpg,Jpg,JPG,jpeg,Jpeg,JPEG,gif,Gif,GIF}'],
   htmlSources = ['build/*.html'];
 
 /**
  * STYLE
  */
- // grab bower scss and drop in build/scss folder
+// grab bower scss and drop in build/scss folder
 gulp.task('bowerScss', function() {
   return gulp.src(bowerScss)
     .pipe(gulp.dest('build/scss'));
 });
- // run compass on app.scss
- // don't forget to @import all the packages (bower)
- // _custom.scss is used to add custom styles
+// run compass on app.scss
+// don't forget to @import all the packages (bower)
+// _custom.scss is used to add custom styles
 gulp.task('sass', ['bowerScss'], function() {
   return gulp.src(customScss)
     .pipe(gulpCompass({
@@ -55,7 +57,7 @@ gulp.task('sass', ['bowerScss'], function() {
       style: 'expanded'
     }));
 });
- // grab the bower css, minify, concat and drop in build/css and dist/css
+// grab the bower css, minify, concat and drop in build/css and dist/css
 gulp.task('bowerCss', function() {
   return gulp.src(bowerCss)
     .pipe(gulpMinifyCss({
@@ -65,8 +67,8 @@ gulp.task('bowerCss', function() {
     .pipe(gulp.dest('build/css'))
     .pipe(gulp.dest('dist/css'));
 });
- // grab the output from the sass task, autoprefix, minify
- // and drop in build/css and dist/css
+// grab the output from the sass task, autoprefix, minify
+// and drop in build/css and dist/css
 gulp.task('css', ['bowerCss', 'sass'], function() {
   return gulp.src(customCss)
     .pipe(gulpAutoprefixer('last 2 versions', 'ie 8'))
@@ -81,7 +83,7 @@ gulp.task('css', ['bowerCss', 'sass'], function() {
 /**
  * JAVASCRIPT
  */
- // grab bower js minify, concat and drop in build/js and dist/js
+// grab bower js minify, concat and drop in build/js and dist/js
 gulp.task('bowerJs', function() {
   return gulp.src(bowerJs)
     .pipe(gulpUglify())
@@ -89,7 +91,7 @@ gulp.task('bowerJs', function() {
     .pipe(gulp.dest('build/js'))
     .pipe(gulp.dest('dist/js'));
 });
- // grab custom.js minify, concat and dorp in build/js and dist/js
+// grab custom.js minify, concat and dorp in build/js and dist/js
 gulp.task('js', ['bowerJs'], function() {
   return gulp.src(customJs)
     .pipe(gulpUglify())
@@ -101,16 +103,28 @@ gulp.task('js', ['bowerJs'], function() {
 /**
  * MEDIA
  */
- // grab all media and move to dist/media
+// grab all media and move to dist/media
 gulp.task('media', function() {
   return gulp.src(mediaSources)
+    .pipe(gulp.dest('dist/media'));
+});
+// grab all images resize and drop in dist/media
+gulp.task('img', ['media'], function() {
+  gulp.src(imagesSources)
+    .pipe(gulpImageResize({
+      width: 1400
+    }))
+    .pipe(gulpImageResize({
+      height: 1400,
+      quality: 1
+    }))
     .pipe(gulp.dest('dist/media'));
 });
 
 /**
  * HTML
  */
- // grab all html and move to dist/
+// grab all html and move to dist/
 gulp.task('html', function() {
   return gulp.src(htmlSources)
     .pipe(gulp.dest('dist'));
@@ -118,7 +132,7 @@ gulp.task('html', function() {
 /**
  * WATCH
  */
- // watch the work files for changes
+// watch the work files for changes
 gulp.task('watch', [], function() {
   gulp.watch(scssSources, ['css']); //all scss files
   gulp.watch(customJs, ['js']); // custom.js
@@ -138,4 +152,4 @@ gulp.task('bs', function() {
 /**
  * DEFAULT
  */
-gulp.task('default', ['css', 'js', 'media', 'html', 'bs', 'watch']);
+gulp.task('default', ['css', 'js', 'img', 'html', 'bs', 'watch']);
